@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+* {box-sizing: border-box}
+body {
+  font-family: Verdana, sans-serif;
+  margin:0;
+  padding: 0 2em 2em;
+}
+
+.carousal-container {
+	/* border: 1px solid plum; */
+}
+.image-wrapper {
+	position: relative;
+	display: flex;
+    padding-bottom: 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+#image-window {
+	display: inline-flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.image {
+	width: 100%;
+    flex: 0 0 100%;
+    height: auto;
+    transition: transform 0.5s ease;
+}
+.slide {
+	position: absolute;
+	display: flex;
+    align-items: center; 
+    justify-content: center;   
+	background: transparent;
+    color: #fff;
+    height: 35px;
+    min-width: 25px;
+	cursor: pointer;
+    z-index:99999;
+}
+.slide:hover {
+	background: #000;
+}
+#prev {
+	border-radius: 0 4px 4px 0;
+}
+#next {
+	border-radius: 4px 0 0 4px;
+    right: 0;
+}
+.dots {
+	display: flex;
+    justify-content: center;
+    margin: 6px 0;
+    padding-bottom: 8px;
+}
+.dot {
+	background: #ccc;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    display: block;
+    margin: 0 4px;
+	cursor: pointer;
+}
+.dot.active {
+	background: #555;
+}
+
+</style>
+</head>
+<body>
+<div class = "carousal-container">
+
+    <h3>Vanilla Image Carousal</h3>
+
+    <div class = "image-wrapper" >
+    
+      <span class="slide" id="prev"> &#10094;</span>
+      <div id="image-window"></div>
+      <span class="slide" id="next"> &#10095;</span>
+    
+    </div>
+    <div class="buttons">
+    </div>
+</div>
+
+<script>
+
+	    
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');    
+    const buttons = document.getElementsByClassName('buttons');
+    const imageWindow = document.getElementById('image-window');
+    
+	let images = [{
+    	src: 'https://www.w3schools.com/howto/img_nature_wide.jpg',
+    },
+    {
+    	src: 'https://www.w3schools.com/howto/img_snow_wide.jpg',
+    },
+    {
+    	src: 'https://www.w3schools.com/howto/img_lights_wide.jpg',
+    },
+    {
+    	src:'https://www.w3schools.com/howto/img_mountains_wide.jpg',
+    }];
+    
+    let currActive = 0;
+    
+    function handleDotClick(id) {
+    	if (currActive !== id) {
+        	currActive = id;
+    		console.log('currActive:', currActive);
+            updateCarousel();
+        }
+    }
+    
+    function handleArrowClick(next = true) {
+    	if (next) {
+    		currActive = currActive == images.length - 1 ? 0 : currActive + 1;
+    	}
+    	else {
+    		currActive = currActive == 0 ? images.length - 1 : currActive - 1;
+    	}        
+    	console.log('currActive:', currActive);
+        updateCarousel();
+    }    
+    
+    function updateCarousel() {
+      const images = document.querySelectorAll('#image-window .image');
+      images.forEach((img, index) => {
+		  img.style.transform = `translateX(-${currActive * 100}%)`;
+      });
+
+      // Update dot visibility
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currActive);
+      });
+    }
+
+    
+    prev.addEventListener('click', () => handleArrowClick(false));
+    next.addEventListener('click', () => handleArrowClick(true));
+
+    const dots = document.createElement('div');
+    dots.classList.add('dots');    
+    
+    images.forEach((image, index) => {    	
+        const imageEl = document.createElement('img');
+        imageEl.classList.add('image');
+        imageEl.src = image.src;
+        imageEl.id = index;
+    
+        const dot = document.createElement("span");
+        dot.classList.add("dot");
+        if (index === 0) dot.classList.add("active");
+        dot.id = index;        
+        dot.addEventListener('click', () => handleDotClick(index));
+        
+        imageWindow.appendChild(imageEl);
+      	dots.appendChild(dot);
+    });
+    
+    buttons[0].appendChild(dots);
+    updateCarousel();
+    
+</script>
+
+</body>
+</html> 

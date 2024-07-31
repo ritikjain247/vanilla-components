@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accordian</title>
+
+  <style>
+    .row {
+      margin-bottom: 2px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      background-color: lightgray;
+      padding: 12px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.5s;
+    }
+    .header:hover, .header.active {
+      background-color: gray;
+    }
+    .content {
+      background-color: #fff;
+      padding: 8px 16px 12px 16px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    .content.expanded { /* for tranistion */
+      max-height: 1000px; 
+      opacity: 1;
+    }
+    .hidden {
+      display: none; /* tranistion not possible */
+    }
+
+  </style>
+
+</head>
+<body>
+  
+  <h2>Accordion</h2>
+
+  <div id="container">
+  </div>
+
+
+  <script>
+    const data =[{
+      title: 'Section 1',
+      content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    },
+    {
+      title: 'Section 2',
+      content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    },
+    {
+      title: 'Section 3',
+      content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    }];
+
+    function handleClick(id) {
+      const contentid = `content${id.slice(6)}`;
+
+      const header = document.getElementById(id);
+      const content = document.getElementById(contentid);
+      const icon = header.querySelector('.icon');
+
+      icon.innerHTML = icon.innerHTML === '+' ? '-' : '+';
+      header.classList.toggle('active');
+      // content.classList.toggle('hidden');
+
+      // for tranistion
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        setTimeout(() => content.classList.add('hidden'), 500); // Hide after the transition ends
+      } else {
+        content.classList.remove('hidden');
+        setTimeout(() => content.classList.add('expanded'), 10); // Start the transition
+      }
+    }
+
+    data.forEach((item, index) => {
+      const container = document.getElementById('container');
+
+      const row = document.createElement('div');
+      row.id = `row${index}`;
+      row.classList.add('row');
+
+      const header = document.createElement('div');
+      header.id = `header${index}`;
+      header.classList.add('header');
+
+      let html = `<span class="title">${item.title}</span>
+      <span class="icon expand">+</span>`;
+      header.innerHTML = html;
+
+      // const title = document.createElement('span');
+      // title.classList.add('title');
+      // title.innerHTML = item.title;
+
+      // const icon = document.createElement('span');
+      // icon.classList.add('icon', 'expand');
+      // icon.innerHTML = '+';
+
+      // header.appendChild(title);
+      // header.appendChild(icon);
+      header.addEventListener('click', () => handleClick(header.id))
+
+
+      const content = document.createElement('div');
+      content.classList.add('content', 'hidden');
+      content.id = `content${index}`;
+      content.innerHTML = item.content;
+
+      row.appendChild(header);
+      row.appendChild(content);
+
+      container.appendChild(row);
+    });
+
+  </script>
+
+</body>
+</html>
