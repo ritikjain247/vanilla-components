@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>requestAnimationFrame Example</title>
+  <style>
+    #box {
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      position: absolute;
+      top: 100px;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="box"></div>
+
+  <script>
+    const box = document.getElementById('box');
+    let start = null;
+
+    function animate(timestamp) {
+      if (!start) start = timestamp;
+      const progress = timestamp - start;
+
+      const windowWidth = window.innerWidth;
+      const boxWidth = box.offsetWidth;
+      const distance = windowWidth - boxWidth;
+
+      // Move the box across the full width of the window
+      const x = Math.min(progress/2, distance);
+
+      box.style.transform = `translateX(${x}px)`;
+
+      if (x < distance) {
+        requestAnimationFrame(animate);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
