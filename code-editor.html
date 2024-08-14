@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Code Editor</title>
+  <script src="https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
+</head>
+<body>
+  <div id="container" style="height:500px;border:1px solid grey"></div>
+  <button onclick="runCode()">Run Code</button>
+  <pre id="output"></pre>
+
+  <script>
+    require.config({ paths: { 'vs': 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+      window.editor = monaco.editor.create(document.getElementById('container'), {
+        value: '',
+        language: 'javascript',
+        theme: 'vs-dark'
+      });
+    });
+
+    async function runCode() {
+      const code = editor.getValue();
+      const language = 'javascript'; // monaco.editor.getModelLanguages(editor.getModel())[0] || 
+      
+      if (language === 'javascript') {
+        runJavaScript(code);
+      } else if (language === 'python') {
+        await runPython(code);
+      }
+    }
+
+    function runJavaScript(code) {
+      try {
+        const result = new Function(code)();
+        document.getElementById('output').textContent = result || 'Code executed successfully';
+      } catch (error) {
+        document.getElementById('output').textContent = error;
+      }
+    }
+
+    async function runPython(code) {
+      const pyodide = await loadPyodide();
+      try {
+        pyodide.runPython(code);
+        document.getElementById('output').textContent = 'Code executed successfully';
+      } catch (error) {
+        document.getElementById('output').textContent = error;
+      }
+    }
+  </script>
+</body>
+</html>
